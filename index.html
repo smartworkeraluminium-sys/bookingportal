@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Worker Aluminium - Service Portal</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background-color: #f7f9fc; }
+        .header { background: #0b1a2a; color: #00d2ff; padding: 20px; text-align: center; font-weight: bold; font-size: 22px; position: sticky; top: 0; z-index: 100; }
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+
+        /* আরবান কোম্পানি স্টাইল গ্রিড */
+        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .service-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; transition: 0.3s; border: 1px solid #eee; }
+        .service-card:active { transform: scale(0.95); background-color: #e3faff; }
+        .service-card img { width: 50px; height: 50px; margin-bottom: 10px; }
+        .service-card h4 { margin: 0; font-size: 14px; color: #333; line-height: 1.4; }
+
+        /* ইনপুট স্ক্রিন */
+        .page { display: none; }
+        .active { display: block; }
+        .back-btn { background: #eee; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 15px; font-weight: bold; }
+        
+        .item-row { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ddd; }
+        .item-row label { font-size: 12px; font-weight: bold; color: #666; }
+        .item-inputs { display: flex; gap: 10px; margin-top: 5px; }
+        .item-inputs input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-align: center; }
+        
+        .add-btn { width: 100%; padding: 12px; background: #e3faff; color: #007bff; border: 2px dashed #007bff; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        .next-btn { width: 100%; padding: 15px; background: #0b1a2a; color: #00d2ff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        
+        .wa-footer { background: #25D366; color: white; display: flex; align-items: center; justify-content: center; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header">Smart Worker Aluminium</div>
+
+    <div class="container">
+        
+        <div id="categoryPage" class="page active">
+            <h3 style="text-align:center;">কী কাজ করাতে চান?</h3>
+            <div class="service-grid">
+                <div class="service-card" onclick="selectService('Aluminium Window/Door')">
+                    <div style="font-size: 30px;">🪟</div>
+                    <h4>Aluminium Window & Door</h4>
+                </div>
+                <div class="service-card" onclick="selectService('Iron Window/Door')">
+                    <div style="font-size: 30px;">🚪</div>
+                    <h4>Iron Window & Door</h4>
+                </div>
+                <div class="service-card" onclick="selectService('Steel Work/Railing')">
+                    <div style="font-size: 30px;">🪜</div>
+                    <h4>Steel Window & Railing</h4>
+                </div>
+                <div class="service-card" onclick="selectService('False Ceiling')">
+                    <div style="font-size: 30px;">🏠</div>
+                    <h4>PVC & Gypsum Ceiling</h4>
+                </div>
+                <div class="service-card" onclick="selectService('Wall Panel')">
+                    <div style="font-size: 30px;">🧱</div>
+                    <h4>PVC Wall Panel</h4>
+                </div>
+                <div class="service-card" onclick="selectService('Electrician')">
+                    <div style="font-size: 30px;">⚡</div>
+                    <h4>Electrician</h4>
+                </div>
+            </div>
+        </div>
+
+        <div id="detailsPage" class="page">
+            <button class="back-btn" onclick="showPage('categoryPage')">← ফিরে যান</button>
+            <h3 id="selectedServiceName">Service Name</h3>
+            <p style="font-size: 13px; color: #666;">মাপ লিখুন (যেমন: ৪ চওড়া / ৫ লম্বা)</p>
+            
+            <div id="itemContainer">
+                <div class="item-row">
+                    <label>আইটেম ১:</label>
+                    <div class="item-inputs">
+                        <input type="text" class="size" placeholder="মাপ (৪/৫)">
+                        <input type="number" class="qty" placeholder="পিস">
+                    </div>
+                </div>
+            </div>
+            
+            <button class="add-btn" onclick="addItem()">+ আরও জানালা/মাপ যোগ করুন</button>
+            <button class="next-btn" onclick="showPage('contactPage')">পরের ধাপ (ঠিকানা)</button>
+        </div>
+
+        <div id="contactPage" class="page">
+            <button class="back-btn" onclick="showPage('detailsPage')">← ফিরে যান</button>
+            <h3>আপনার তথ্য দিন</h3>
+            <div class="form-group">
+                <label>নাম:</label>
+                <input type="text" id="custName" placeholder="আপনার নাম">
+            </div>
+            <div class="form-group">
+                <label>সম্পূর্ণ ঠিকানা (পাড়া, ব্লক, জেলা):</label>
+                <input type="text" id="custAddress" placeholder="যেমন: আমতা, হাওড়া">
+            </div>
+            <div class="form-group">
+                <label>পিনকোড:</label>
+                <input type="number" id="custPin" placeholder="711401">
+            </div>
+
+            <a class="wa-footer" onclick="sendToWhatsApp()">
+                <svg style="width:24px; height:24px; margin-right:10px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91c0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23c-1.48 0-2.93-.39-4.19-1.15l-.3-.17l-3.12.82l.83-3.04l-.2-.32a8.188 8.188 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24M8.53 7.33c-.16 0-.43.06-.66.31c-.22.25-.87.86-.87 2.07c0 1.22.89 2.39 1.01 2.56c.12.17 1.75 2.67 4.23 3.74c.59.26 1.05.41 1.41.52c.59.19 1.13.16 1.56.1c.48-.07 1.47-.6 1.67-1.18c.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28c-.24-.12-1.47-.73-1.69-.81c-.23-.08-.39-.12-.56.12c-.17.25-.64.81-.78.97c-.15.17-.29.19-.53.07c-.24-.13-1.03-.38-1.96-1.21c-.72-.64-1.21-1.44-1.35-1.68c-.14-.24-.02-.37.1-.49c.11-.11.24-.28.37-.42c.12-.15.17-.25.25-.41c.09-.17.04-.31-.02-.43c-.06-.11-.56-1.35-.77-1.84c-.2-.48-.4-.42-.56-.43c-.14 0-.3 0-.47 0Z" /></svg>
+                হোয়াটসঅ্যাপে বুকিং পাঠান
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        let currentService = "";
+        let itemCount = 1;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function selectService(service) {
+            currentService = service;
+            document.getElementById('selectedServiceName').innerText = service;
+            showPage('detailsPage');
+        }
+
+        function addItem() {
+            itemCount++;
+            let container = document.getElementById('itemContainer');
+            let div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = `
+                <label>আইটেম ${itemCount}:</label>
+                <div class="item-inputs">
+                    <input type="text" class="size" placeholder="মাপ (৪/৫)">
+                    <input type="number" class="qty" placeholder="পিস">
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function sendToWhatsApp() {
+            let name = document.getElementById('custName').value;
+            let address = document.getElementById('custAddress').value;
+            let pin = document.getElementById('custPin').value;
+            
+            if(!name || !address || !pin) {
+                alert("দয়া করে আপনার নাম ও ঠিকানা লিখুন।");
+                return;
+            }
+
+            let sizes = document.querySelectorAll('.size');
+            let qtys = document.querySelectorAll('.qty');
+            let itemsText = "";
+
+            for(let i=0; i<sizes.length; i++) {
+                if(sizes[i].value !== "") {
+                    itemsText += `- মাপ: ${sizes[i].value} | পিস: ${qtys[i].value || 1}\n`;
+                }
+            }
+
+            let message = `*নতুন প্রজেক্ট বুকিং (SWA)*\n\n` +
+                          `🛠 সার্ভিস: ${currentService}\n` +
+                          `📋 লিস্ট:\n${itemsText}\n` +
+                          `👤 নাম: ${name}\n` +
+                          `🏠 ঠিকানা: ${address}\n` +
+                          `📍 পিনকোড: ${pin}\n\n` +
+                          `_আমি ৬০% অ্যাডভান্স দিতে রাজি আছি।_`;
+
+            let waLink = `https://wa.me/919239413517?text=${encodeURIComponent(message)}`;
+            window.open(waLink, '_blank');
+        }
+    </script>
+</body>
+</html>
