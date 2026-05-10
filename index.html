@@ -1,123 +1,216 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Worker Aluminium - Service Portal</title>
+    <title>Smart Worker Aluminium - Booking Portal</title>
     <style>
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background-color: #f7f9fc; }
-        .header { background: #0b1a2a; color: #00d2ff; padding: 20px; text-align: center; font-weight: bold; font-size: 22px; position: sticky; top: 0; z-index: 100; }
-        .container { padding: 15px; max-width: 500px; margin: auto; }
+        :root {
+            --primary: #00d2ff;
+            --bg: #0b1a2a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text: #ffffff;
+        }
+        body { 
+            margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: #0b1a2a; /* স্ক্রিনশটের মত সলিড ডার্ক ব্লু */
+            color: var(--text); min-height: 100vh;
+        }
+        .header { 
+            background: #0b1a2a;
+            padding: 15px 20px; display: flex; justify-content: space-between; 
+            align-items: center; position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header-title { font-weight: bold; font-size: 20px; color: var(--primary); }
+        .lang-btn { 
+            background: transparent; color: var(--primary); border: 1px solid var(--primary);
+            padding: 6px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px;
+        }
+        .container { padding: 15px; max-width: 600px; margin: auto; padding-bottom: 50px; }
+        
+        /* Hero Section - স্ক্রিনশটের মত */
+        .hero { 
+            text-align: center; padding: 20px 10px; border-radius: 12px; margin-bottom: 20px; 
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); 
+        }
+        .hero h2 { margin: 0; font-size: 18px; color: var(--primary); }
+        .hero p { font-size: 13px; opacity: 0.8; margin: 8px 0 0; color: #ddd; }
 
-        /* আরবান কোম্পানি স্টাইল গ্রিড */
-        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .service-card { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; transition: 0.3s; border: 1px solid #eee; }
-        .service-card:active { transform: scale(0.95); background-color: #e3faff; }
-        .service-card img { width: 50px; height: 50px; margin-bottom: 10px; }
-        .service-card h4 { margin: 0; font-size: 14px; color: #333; line-height: 1.4; }
+        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .service-card { 
+            background: var(--card-bg); padding: 20px 10px; border-radius: 12px; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+        }
+        .service-card:active { transform: scale(0.95); }
+        
+        /* Emoji Style */
+        .service-card span { font-size: 45px; display: block; margin-bottom: 10px; }
+        .service-card h4 { margin: 0; font-size: 14px; line-height: 1.4; font-weight: 600;}
 
-        /* ইনপুট স্ক্রিন */
         .page { display: none; }
         .active { display: block; }
-        .back-btn { background: #eee; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-bottom: 15px; font-weight: bold; }
+
+        .back-btn { background: transparent; color: var(--text); border: none; padding: 10px 0; cursor: pointer; font-size: 15px; font-weight: bold; margin-bottom: 10px;}
         
-        .item-row { background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ddd; }
-        .item-row label { font-size: 12px; font-weight: bold; color: #666; }
-        .item-inputs { display: flex; gap: 10px; margin-top: 5px; }
-        .item-inputs input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-align: center; }
+        .form-section { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
         
-        .add-btn { width: 100%; padding: 12px; background: #e3faff; color: #007bff; border: 2px dashed #007bff; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        .next-btn { width: 100%; padding: 15px; background: #0b1a2a; color: #00d2ff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        label { display: block; font-size: 13px; color: var(--primary); margin-bottom: 8px; font-weight: bold;}
+        input, textarea { 
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;
+            box-sizing: border-box; margin-bottom: 10px; outline: none; font-size: 14px;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); }
         
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-        
-        .wa-footer { background: #25D366; color: white; display: flex; align-items: center; justify-content: center; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; text-decoration: none; }
+        .row-inputs { display: flex; gap: 10px; }
+
+        .add-more-btn { background: rgba(0, 210, 255, 0.1); color: var(--primary); border: 1px dashed var(--primary); width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; font-weight: bold; font-size: 14px;}
+
+        .next-btn { 
+            width: 100%; padding: 15px; background: var(--primary); color: #0b1a2a; 
+            border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+
+        .call-footer { margin-top: 30px; text-align: center; padding: 15px; background: var(--card-bg); border-radius: 8px; font-size: 14px; }
+        .call-link { color: var(--primary); text-decoration: none; font-weight: bold; font-size: 16px;}
     </style>
 </head>
 <body>
-
-    <div class="header">Smart Worker Aluminium</div>
+    <div class="header">
+        <div class="header-title">Smart Worker Aluminium</div>
+        <button class="lang-btn" onclick="toggleLang()">🌐 English</button>
+    </div>
 
     <div class="container">
-        
         <div id="categoryPage" class="page active">
-            <h3 style="text-align:center;">কী কাজ করাতে চান?</h3>
+            <div class="hero">
+                <h2 id="t-hero-h">আধুনিক ফ্যাব্রিকেশন সলিউশন</h2>
+                <p id="t-hero-p">১ বছরের ফ্রি সার্ভিস গ্যারান্টি সহ</p>
+            </div>
             <div class="service-grid">
-                <div class="service-card" onclick="selectService('Aluminium Window/Door')">
-                    <div style="font-size: 30px;">🪟</div>
-                    <h4>Aluminium Window & Door</h4>
+                <div class="service-card" onclick="selectService('alu', 'fab')">
+                    <span>🪟</span><h4 id="t-alu">অ্যালুমিনিয়াম কাজ<br>(জানালা/দরজা/পার্টিশন)</h4>
                 </div>
-                <div class="service-card" onclick="selectService('Iron Window/Door')">
-                    <div style="font-size: 30px;">🚪</div>
-                    <h4>Iron Window & Door</h4>
+                <div class="service-card" onclick="selectService('upvc', 'fab')">
+                    <span>🏢</span><h4 id="t-upvc">UPVC উইন্ডো<br>(জানালা/দরজা)</h4>
                 </div>
-                <div class="service-card" onclick="selectService('Steel Work/Railing')">
-                    <div style="font-size: 30px;">🪜</div>
-                    <h4>Steel Window & Railing</h4>
+                <div class="service-card" onclick="selectService('pvc_door', 'fab')">
+                    <span>🚪</span><h4 id="t-pvc-door">পিভিসি দরজা</h4>
                 </div>
-                <div class="service-card" onclick="selectService('False Ceiling')">
-                    <div style="font-size: 30px;">🏠</div>
-                    <h4>PVC & Gypsum Ceiling</h4>
+                <div class="service-card" onclick="selectService('pvc', 'details')">
+                    <span>🏠</span><h4 id="t-pvc">ফলস সিলিং ও প্যানেলিং<br>(PVC / POP)</h4>
                 </div>
-                <div class="service-card" onclick="selectService('Wall Panel')">
-                    <div style="font-size: 30px;">🧱</div>
-                    <h4>PVC Wall Panel</h4>
+                <div class="service-card" onclick="selectService('wood', 'details')">
+                    <span>🪵</span><h4 id="t-wood">কাঠের কাজ<br>(ওয়ার্ড ড্রপ/ক্যাবিনেট)</h4>
                 </div>
-                <div class="service-card" onclick="selectService('Electrician')">
-                    <div style="font-size: 30px;">⚡</div>
-                    <h4>Electrician</h4>
+                <div class="service-card" onclick="selectService('steel', 'fab')">
+                    <span>🪜</span><h4 id="t-steel">স্টিল রেলিং</h4>
                 </div>
+                <div class="service-card" onclick="selectService('iron', 'fab')">
+                    <span>⛓️</span><h4 id="t-iron">লোহার কাজ</h4>
+                </div>
+                <div class="service-card" onclick="selectService('elec', 'details')">
+                    <span>⚡</span><h4 id="t-elec">ইলেকট্রিশিয়ান</h4>
+                </div>
+                <div class="service-card" onclick="selectService('plum', 'details')">
+                    <span>🚰</span><h4 id="t-plum">প্লাম্বার</h4>
+                </div>
+            </div>
+            
+            <div class="call-footer">
+                <span id="t-footer-q">জরুরী কথা বলতে সরাসরি কল করুন:</span><br>
+                <a href="tel:+919239413517" class="call-link">📞 +91 9239413517</a>
             </div>
         </div>
 
         <div id="detailsPage" class="page">
-            <button class="back-btn" onclick="showPage('categoryPage')">← ফিরে যান</button>
-            <h3 id="selectedServiceName">Service Name</h3>
-            <p style="font-size: 13px; color: #666;">মাপ লিখুন (যেমন: ৪ চওড়া / ৫ লম্বা)</p>
+            <button class="back-btn t-back" onclick="showPage('categoryPage')">← ফিরে যান</button>
+            <h3 id="selectedServiceName" style="color: white; margin-top: 5px; text-align: center;">Service Name</h3>
             
-            <div id="itemContainer">
-                <div class="item-row">
-                    <label>আইটেম ১:</label>
-                    <div class="item-inputs">
-                        <input type="text" class="size" placeholder="মাপ (৪/৫)">
-                        <input type="number" class="qty" placeholder="পিস">
-                    </div>
-                </div>
+            <div class="form-section">
+                <label id="t-desc-label">কী ধরনের কাজ করাতে চাইছেন এখানে বিস্তারিত লিখুন:</label>
+                <textarea id="workDescription" placeholder="যেমন: কিচেন ক্যাবিনেট ডিজাইন, ৩ পিস স্লাইডিং জানালা, বা অন্য কোনো বিশেষ কাজ..." rows="4"></textarea>
             </div>
-            
-            <button class="add-btn" onclick="addItem()">+ আরও জানালা/মাপ যোগ করুন</button>
-            <button class="next-btn" onclick="showPage('contactPage')">পরের ধাপ (ঠিকানা)</button>
+
+            <div id="fabricationInputs" class="form-section" style="display: none;">
+                <label id="t-fab-label">মাপ এবং পিস (যদি জানা থাকে):</label>
+                <div id="itemContainer"></div>
+                <button id="addBtn" class="add-more-btn t-add" onclick="addItem()">+ আরও মাপ যোগ করুন</button>
+            </div>
+
+            <button class="next-btn t-next" onclick="showPage('contactPage')">পরের ধাপ (ঠিকানা দিন)</button>
         </div>
 
         <div id="contactPage" class="page">
-            <button class="back-btn" onclick="showPage('detailsPage')">← ফিরে যান</button>
-            <h3>আপনার তথ্য দিন</h3>
-            <div class="form-group">
-                <label>নাম:</label>
-                <input type="text" id="custName" placeholder="আপনার নাম">
+            <button class="back-btn t-back" onclick="showPage('detailsPage')">← ফিরে যান</button>
+            <div class="form-section" style="margin-top: 20px;">
+                <label id="t-address-title" style="font-size: 16px;">আপনার যোগাযোগের তথ্য:</label>
+                <input type="text" id="custName" placeholder="আপনার নাম লিখুন">
+                <input type="text" id="custAddress" placeholder="আপনার সম্পূর্ণ ঠিকানা ও ফোন নম্বর">
             </div>
-            <div class="form-group">
-                <label>সম্পূর্ণ ঠিকানা (পাড়া, ব্লক, জেলা):</label>
-                <input type="text" id="custAddress" placeholder="যেমন: আমতা, হাওড়া">
-            </div>
-            <div class="form-group">
-                <label>পিনকোড:</label>
-                <input type="number" id="custPin" placeholder="711401">
-            </div>
-
-            <a class="wa-footer" onclick="sendToWhatsApp()">
-                <svg style="width:24px; height:24px; margin-right:10px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91c0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23c-1.48 0-2.93-.39-4.19-1.15l-.3-.17l-3.12.82l.83-3.04l-.2-.32a8.188 8.188 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24M8.53 7.33c-.16 0-.43.06-.66.31c-.22.25-.87.86-.87 2.07c0 1.22.89 2.39 1.01 2.56c.12.17 1.75 2.67 4.23 3.74c.59.26 1.05.41 1.41.52c.59.19 1.13.16 1.56.1c.48-.07 1.47-.6 1.67-1.18c.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28c-.24-.12-1.47-.73-1.69-.81c-.23-.08-.39-.12-.56.12c-.17.25-.64.81-.78.97c-.15.17-.29.19-.53.07c-.24-.13-1.03-.38-1.96-1.21c-.72-.64-1.21-1.44-1.35-1.68c-.14-.24-.02-.37.1-.49c.11-.11.24-.28.37-.42c.12-.15.17-.25.25-.41c.09-.17.04-.31-.02-.43c-.06-.11-.56-1.35-.77-1.84c-.2-.48-.4-.42-.56-.43c-.14 0-.3 0-.47 0Z" /></svg>
-                হোয়াটসঅ্যাপে বুকিং পাঠান
-            </a>
+            <button class="next-btn" onclick="sendToWhatsApp()" id="t-wa-btn" style="background:#25D366; color:white; padding: 18px;">হোয়াটসঅ্যাপে বুকিং পাঠান</button>
         </div>
-
     </div>
 
     <script>
+        let currentLang = 'bn';
         let currentService = "";
-        let itemCount = 1;
+        let serviceFormType = ""; 
+        let itemCount = 0;
+
+        const langData = {
+            'bn': {
+                heroH: "আধুনিক ফ্যাব্রিকেশন সলিউশন", heroP: "১ বছরের ফ্রি সার্ভিস গ্যারান্টি সহ",
+                alu: "অ্যালুমিনিয়াম কাজ<br>(জানালা/দরজা/পার্টিশন)", upvc: "UPVC উইন্ডো<br>(জানালা/দরজা)", pvc_door: "পিভিসি দরজা", pvc: "ফলস সিলিং ও প্যানেলিং<br>(PVC / POP)", 
+                wood: "কাঠের কাজ<br>(ওয়ার্ড ড্রপ/ক্যাবিনেট)", steel: "স্টিল রেলিং", iron: "লোহার কাজ", elec: "ইলেকট্রিশিয়ান", plum: "প্লাম্বার",
+                back: "← ফিরে যান", next: "পরের ধাপ (ঠিকানা দিন)", addressTitle: "আপনার যোগাযোগের তথ্য:", namePh: "আপনার নাম লিখুন", addrPh: "আপনার সম্পূর্ণ ঠিকানা ও ফোন নম্বর", waBtn: "হোয়াটসঅ্যাপে বুকিং পাঠান",
+                footerQ: "জরুরী কথা বলতে সরাসরি কল করুন:", fabLabel: "মাপ এবং পিস (যদি জানা থাকে):", addMore: "+ আরও মাপ যোগ করুন", descLabel: "কী ধরনের কাজ করাতে চাইছেন এখানে বিস্তারিত লিখুন:", descPh: "যেমন: কিচেন ক্যাবিনেট ডিজাইন, ৩ পিস স্লাইডিং জানালা, বা অন্য কোনো বিশেষ কাজ...", sizePh: "মাপ (যেমন 4/5)", qtyPh: "পিস", item: "মাপ"
+            },
+            'en': {
+                heroH: "Modern Fabrication Solutions", heroP: "With 1-Year Free Service Guarantee",
+                alu: "Aluminium Work<br>(Window/Door)", upvc: "UPVC Window<br>(Window/Door)", pvc_door: "PVC Door", pvc: "False Ceiling & Paneling<br>(PVC / POP)", 
+                wood: "Woodwork<br>(Wardrobe/Cabinet)", steel: "Steel Railing", iron: "Iron Work", elec: "Electrician", plum: "Plumber",
+                back: "← Back", next: "Next Step (Address)", addressTitle: "Your Contact Information:", namePh: "Enter Your Name", addrPh: "Full Address & Phone Number", waBtn: "Send Booking via WhatsApp",
+                footerQ: "Call us directly for urgent needs:", fabLabel: "Dimensions & Pcs (If known):", addMore: "+ Add More Sizes", descLabel: "Write details of the work you want to do:", descPh: "e.g., Kitchen cabinet design, 3 sliding windows, or any special work...", sizePh: "Size (e.g. 4/5)", qtyPh: "Pcs", item: "Item"
+            }
+        };
+
+        function toggleLang() {
+            currentLang = currentLang === 'bn' ? 'en' : 'bn';
+            document.querySelector('.lang-btn').innerText = currentLang === 'bn' ? '🌐 English' : '🌐 বাংলা';
+            applyLang();
+        }
+
+        function applyLang() {
+            const d = langData[currentLang];
+            document.getElementById('t-hero-h').innerText = d.heroH;
+            document.getElementById('t-hero-p').innerText = d.heroP;
+            document.getElementById('t-alu').innerHTML = d.alu;
+            document.getElementById('t-upvc').innerHTML = d.upvc;
+            document.getElementById('t-pvc-door').innerText = d.pvc_door;
+            document.getElementById('t-pvc').innerHTML = d.pvc;
+            document.getElementById('t-wood').innerHTML = d.wood;
+            document.getElementById('t-steel').innerText = d.steel;
+            document.getElementById('t-iron').innerText = d.iron;
+            document.getElementById('t-elec').innerText = d.elec;
+            document.getElementById('t-plum').innerText = d.plum;
+            document.querySelectorAll('.t-back').forEach(el => el.innerText = d.back);
+            document.querySelector('.t-next').innerText = d.next;
+            document.getElementById('t-address-title').innerText = d.addressTitle;
+            document.getElementById('custName').placeholder = d.namePh;
+            document.getElementById('custAddress').placeholder = d.addrPh;
+            document.getElementById('t-wa-btn').innerText = d.waBtn;
+            document.getElementById('t-footer-q').innerText = d.footerQ;
+            document.getElementById('t-fab-label').innerText = d.fabLabel;
+            document.getElementById('addBtn').innerText = d.addMore;
+            document.getElementById('t-desc-label').innerText = d.descLabel;
+            document.getElementById('workDescription').placeholder = d.descPh;
+            if(currentService) document.getElementById('selectedServiceName').innerText = langData[currentLang][currentService].replace('<br>', ' ');
+            document.querySelectorAll('.size').forEach(el => el.placeholder = d.sizePh);
+            document.querySelectorAll('.qty').forEach(el => el.placeholder = d.qtyPh);
+        }
 
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -125,57 +218,69 @@
             window.scrollTo(0,0);
         }
 
-        function selectService(service) {
-            currentService = service;
-            document.getElementById('selectedServiceName').innerText = service;
+        function selectService(key, type) {
+            currentService = key; 
+            serviceFormType = type; 
+            itemCount = 0;
+            document.getElementById('selectedServiceName').innerText = langData[currentLang][key].replace('<br>', ' ');
+            
+            const fabInputs = document.getElementById('fabricationInputs');
+            if(type === 'fab') {
+                fabInputs.style.display = 'block';
+                document.getElementById('itemContainer').innerHTML = "";
+                addItem();
+            } else {
+                fabInputs.style.display = 'none';
+            }
+            
+            document.getElementById('workDescription').value = "";
             showPage('detailsPage');
         }
 
         function addItem() {
             itemCount++;
-            let container = document.getElementById('itemContainer');
             let div = document.createElement('div');
-            div.className = 'item-row';
+            let d = langData[currentLang];
             div.innerHTML = `
-                <label>আইটেম ${itemCount}:</label>
-                <div class="item-inputs">
-                    <input type="text" class="size" placeholder="মাপ (৪/৫)">
-                    <input type="number" class="qty" placeholder="পিস">
-                </div>
-            `;
-            container.appendChild(div);
+            <div class="row-inputs">
+                <input type="text" class="size" placeholder="${d.sizePh}">
+                <input type="number" class="qty" placeholder="${d.qtyPh}">
+            </div>`;
+            document.getElementById('itemContainer').appendChild(div);
         }
 
         function sendToWhatsApp() {
             let name = document.getElementById('custName').value;
-            let address = document.getElementById('custAddress').value;
-            let pin = document.getElementById('custPin').value;
-            
-            if(!name || !address || !pin) {
-                alert("দয়া করে আপনার নাম ও ঠিকানা লিখুন।");
+            let addr = document.getElementById('custAddress').value;
+            let description = document.getElementById('workDescription').value;
+            let measurements = "";
+
+            if(serviceFormType === 'fab') {
+                let sizeFields = document.querySelectorAll('.size');
+                let qtyFields = document.querySelectorAll('.qty');
+                let sizeWord = currentLang === 'bn' ? "মাপ" : "Size";
+                let qtyWord = currentLang === 'bn' ? "পিস" : "Pcs";
+                
+                sizeFields.forEach((s, i) => {
+                    let q = qtyFields[i].value;
+                    if(s.value && q) measurements += `- ${sizeWord}: ${s.value} | ${qtyWord}: ${q}\n`;
+                });
+            }
+
+            if(!name || !addr) {
+                alert(currentLang === 'bn' ? "দয়া করে আপনার নাম ও ঠিকানা লিখুন।" : "Please enter your name and address.");
                 return;
             }
 
-            let sizes = document.querySelectorAll('.size');
-            let qtys = document.querySelectorAll('.qty');
-            let itemsText = "";
+            let serviceTitle = langData[currentLang][currentService].replace('<br>', ' ');
+            let msgTitle = currentLang === 'bn' ? "*নতুন বুকিং (SWA)*" : "*New Booking (SWA)*";
+            
+            let msg = `${msgTitle}\n\n🛠 *সার্ভিস:* ${serviceTitle}`;
+            if(description) msg += `\n📝 *কাজের বিবরণ:*\n${description}`;
+            if(measurements) msg += `\n📏 *মাপ:*\n${measurements}`;
+            msg += `\n\n👤 *নাম:* ${name}\n📍 *ঠিকানা/ফোন:* ${addr}`;
 
-            for(let i=0; i<sizes.length; i++) {
-                if(sizes[i].value !== "") {
-                    itemsText += `- মাপ: ${sizes[i].value} | পিস: ${qtys[i].value || 1}\n`;
-                }
-            }
-
-            let message = `*নতুন প্রজেক্ট বুকিং (SWA)*\n\n` +
-                          `🛠 সার্ভিস: ${currentService}\n` +
-                          `📋 লিস্ট:\n${itemsText}\n` +
-                          `👤 নাম: ${name}\n` +
-                          `🏠 ঠিকানা: ${address}\n` +
-                          `📍 পিনকোড: ${pin}\n\n` +
-                          `_আমি ৬০% অ্যাডভান্স দিতে রাজি আছি।_`;
-
-            let waLink = `https://wa.me/919239413517?text=${encodeURIComponent(message)}`;
-            window.open(waLink, '_blank');
+            window.open(`https://wa.me/919239413517?text=${encodeURIComponent(msg)}`);
         }
     </script>
 </body>
