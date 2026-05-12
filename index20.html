@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Worker Aluminium - Professional Portal</title>
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --bg: #0b1a2a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text: #ffffff;
+            --amazon-orange: #ffa41c;
+        }
+        body { 
+            margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: var(--bg); color: var(--text); min-height: 100vh;
+        }
+        .header { 
+            background: #0b1a2a; padding: 15px 20px; display: flex; 
+            justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header-title { font-weight: bold; font-size: 18px; color: var(--primary); }
+        .lang-btn { 
+            background: transparent; color: var(--primary); border: 1px solid var(--primary);
+            padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 12px;
+        }
+        .container { padding: 15px; max-width: 600px; margin: auto; padding-bottom: 80px; }
+        
+        .hero { 
+            text-align: center; padding: 20px 10px; border-radius: 12px; margin-bottom: 20px; 
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); 
+        }
+        .hero h2 { margin: 0; font-size: 18px; color: var(--primary); }
+        .hero p { font-size: 13px; opacity: 0.8; margin: 8px 0 0; }
+
+        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .service-card { 
+            background: var(--card-bg); padding: 15px 10px; border-radius: 12px; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.05); cursor: pointer;
+        }
+        .service-card:active { transform: scale(0.95); }
+        .service-card span { font-size: 40px; display: block; margin-bottom: 8px; }
+        .service-card h4 { margin: 0; font-size: 13px; line-height: 1.4; font-weight: 600;}
+        
+        .review-card-special { border: 1px solid var(--amazon-orange) !important; background: rgba(255, 164, 28, 0.08) !important; }
+
+        .page { display: none; }
+        .active { display: block; }
+
+        .back-btn { background: transparent; color: var(--text); border: none; padding: 10px 0; cursor: pointer; font-size: 14px; font-weight: bold; }
+        
+        /* Amazon Review Styles */
+        .amazon-summary { background: white; color: #111; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 11px; }
+        .bar-bg { flex-grow: 1; height: 12px; background: #f0f2f2; border-radius: 2px; border: 1px solid #ddd; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--amazon-orange); }
+        .write-review-btn { 
+            width: 100%; padding: 12px; background: #ffd814; color: #111; border: 1px solid #fcd200; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+
+        .form-section { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        input, textarea, select { 
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;
+            box-sizing: border-box; margin-bottom: 10px; font-size: 14px;
+        }
+        .next-btn { 
+            width: 100%; padding: 15px; background: var(--primary); color: #0b1a2a; 
+            border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+        .review-item { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .review-img { width: 100%; border-radius: 6px; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">Smart Worker Aluminium</div>
+        <button class="lang-btn" onclick="toggleLang()">🌐 English</button>
+    </div>
+
+    <div class="container">
+        <div id="categoryPage" class="page active">
+            <div class="hero">
+                <h2 id="t-hero-h">আধুনিক ফ্যাব্রিকেশন সলিউশন</h2>
+                <p id="t-hero-p">১ বছরের ফ্রি সার্ভিস গ্যারান্টি সহ</p>
+            </div>
+            <div class="service-grid">
+                <div class="service-card" onclick="selectService('alu', 'fab')"><span>🪟</span><h4 id="t-alu">অ্যালুমিনিয়াম কাজ</h4></div>
+                <div class="service-card" onclick="selectService('upvc', 'fab')"><span>🏢</span><h4 id="t-upvc">UPVC উইন্ডো</h4></div>
+                <div class="service-card" onclick="selectService('pvc_door', 'fab')"><span>🚪</span><h4 id="t-pvc-door">পিভিসি দরজা</h4></div>
+                <div class="service-card" onclick="selectService('pvc', 'details')"><span>🏠</span><h4 id="t-pvc">ফলস সিলিং ও প্যানেলিং</h4></div>
+                <div class="service-card" onclick="selectService('wood', 'details')"><span>🪵</span><h4 id="t-wood">কাঠের কাজ</h4></div>
+                <div class="service-card" onclick="selectService('steel', 'fab')"><span>🪜</span><h4 id="t-steel">স্টিল রেলিং</h4></div>
+                <div class="service-card" onclick="selectService('iron', 'fab')"><span>⛓️</span><h4 id="t-iron">লোহার কাজ</h4></div>
+                <div class="service-card" onclick="selectService('elec', 'details')"><span>⚡</span><h4 id="t-elec">ইলেকট্রিশিয়ান</h4></div>
+                <div class="service-card" onclick="selectService('plum', 'details')"><span>🚰</span><h4 id="t-plum">প্লাম্বার</h4></div>
+                <div class="service-card review-card-special" onclick="showPage('reviewPage')"><span>⭐</span><h4 id="t-review-cat">কাস্টমার রিভিউ</h4></div>
+            </div>
+        </div>
+
+        <div id="reviewPage" class="page">
+            <button class="back-btn" onclick="showPage('categoryPage')">← ফিরে যান</button>
+            <div class="amazon-summary">
+                <h3 style="margin:0; color:#111;">Customer Reviews</h3>
+                <div style="display:flex; align-items:center; gap:5px; margin: 10px 0; color:var(--amazon-orange);">
+                    <span style="font-size:20px;">⭐⭐⭐⭐⭐</span> <span style="color:#111; font-weight:bold;">4.9 out of 5</span>
+                </div>
+                <div class="bar-row"><span>5 star</span><div class="bar-bg"><div class="bar-fill" style="width: 92%;"></div></div><span>92%</span></div>
+                <div class="bar-row"><span>4 star</span><div class="bar-bg"><div class="bar-fill" style="width: 6%;"></div></div><span>6%</span></div>
+                <button class="write-review-btn" onclick="document.getElementById('revForm').style.display='block'">Write a customer review</button>
+            </div>
+
+            <div id="revForm" class="form-section" style="display:none;">
+                <input type="text" id="revName" placeholder="আপনার নাম">
+                <textarea id="revText" placeholder="কাজের অভিজ্ঞতা লিখুন..."></textarea>
+                <input type="file" id="revPhoto" accept="image/*">
+                <button class="next-btn" onclick="addLocalReview()">Submit Review</button>
+            </div>
+
+            <div id="reviewList">
+                <div class="review-item">
+                    <strong>অরিন্দম দাস</strong> <span style="color:var(--amazon-orange);">⭐⭐⭐⭐⭐</span>
+                    <p style="font-size:13px;">দারুণ ফিনিশিং! আমতায় এমন কাজ খুব কম দেখা যায়।</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="detailsPage" class="page">
+            <button class="back-btn" onclick="showPage('categoryPage')">← ফিরে যান</button>
+            <h3 id="selectedServiceName" style="text-align:center; color:var(--primary); margin: 10px 0;">Service</h3>
+            
+            <div class="form-section">
+                <label id="t-desc-label">কাজের বিবরণ লিখুন:</label>
+                <textarea id="workDescription" rows="4"></textarea>
+            </div>
+
+            <div id="fabricationInputs" class="form-section" style="display:none;">
+                <label id="t-fab-label">মাপ এবং পিস:</label>
+                <div id="itemContainer"></div>
+                <button class="next-btn" style="background:rgba(0,210,255,0.1); color:var(--primary); border:1px dashed var(--primary); margin-top:10px;" onclick="addItem()">+ মাপ যোগ করুন</button>
+            </div>
+
+            <button class="next-btn" onclick="showPage('contactPage')">পরের ধাপ (ঠিকানা দিন)</button>
+        </div>
+
+        <div id="contactPage" class="page">
+            <button class="back-btn" onclick="showPage('detailsPage')">← ফিরে যান</button>
+            <div class="form-section">
+                <input type="text" id="custName" placeholder="আপনার নাম">
+                <input type="text" id="custAddress" placeholder="ঠিকানা ও ফোন নম্বর">
+                <button class="next-btn" style="background:#25D366; color:white;" onclick="sendToWhatsApp()">হোয়াটসঅ্যাপে পাঠান</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'bn';
+        let currentService = "";
+        let serviceFormType = "";
+
+        const langData = {
+            'bn': {
+                heroH: "আধুনিক ফ্যাব্রিকেশন সলিউশন", heroP: "১ বছরের ফ্রি সার্ভিস গ্যারান্টি সহ",
+                alu: "অ্যালুমিনিয়াম কাজ", upvc: "UPVC উইন্ডো", pvc_door: "পিভিসি দরজা", pvc: "ফলস সিলিং ও প্যানেলিং", 
+                wood: "কাঠের কাজ", steel: "স্টিল রেলিং", iron: "লোহার কাজ", elec: "ইলেকট্রিশিয়ান", plum: "প্লাম্বার",
+                revCat: "কাস্টমার রিভিউ", back: "← ফিরে যান", fabLabel: "মাপ এবং পিস (যদি জানা থাকে):", descLabel: "কাজের বিবরণ লিখুন:"
+            },
+            'en': {
+                heroH: "Modern Fabrication Solutions", heroP: "With 1-Year Free Service Guarantee",
+                alu: "Aluminium Work", upvc: "UPVC Window", pvc_door: "PVC Door", pvc: "False Ceiling & Paneling", 
+                wood: "Woodwork", steel: "Steel Railing", iron: "Iron Work", elec: "Electrician", plum: "Plumber",
+                revCat: "Customer Reviews", back: "← Back", fabLabel: "Dimensions & Pcs:", descLabel: "Write details of work:"
+            }
+        };
+
+        function toggleLang() {
+            currentLang = currentLang === 'bn' ? 'en' : 'bn';
+            document.querySelector('.lang-btn').innerText = currentLang === 'bn' ? '🌐 English' : '🌐 বাংলা';
+            applyLang();
+        }
+
+        function applyLang() {
+            const d = langData[currentLang];
+            document.getElementById('t-hero-h').innerText = d.heroH;
+            document.getElementById('t-hero-p').innerText = d.heroP;
+            document.getElementById('t-alu').innerText = d.alu;
+            document.getElementById('t-upvc').innerText = d.upvc;
+            document.getElementById('t-pvc-door').innerText = d.pvc_door;
+            document.getElementById('t-pvc').innerText = d.pvc;
+            document.getElementById('t-wood').innerText = d.wood;
+            document.getElementById('t-steel').innerText = d.steel;
+            document.getElementById('t-iron').innerText = d.iron;
+            document.getElementById('t-elec').innerText = d.elec;
+            document.getElementById('t-plum').innerText = d.plum;
+            document.getElementById('t-review-cat').innerText = d.revCat;
+            document.querySelectorAll('.back-btn').forEach(b => b.innerText = d.back);
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function selectService(key, type) {
+            currentService = key; serviceFormType = type;
+            document.getElementById('selectedServiceName').innerText = langData[currentLang][key];
+            const fabInputs = document.getElementById('fabricationInputs');
+            if(type === 'fab') {
+                fabInputs.style.display = 'block';
+                document.getElementById('itemContainer').innerHTML = "";
+                addItem();
+            } else { fabInputs.style.display = 'none'; }
+            showPage('detailsPage');
+        }
+
+        function addItem() {
+            let div = document.createElement('div');
+            div.className = "row-inputs";
+            div.style.display = "flex"; div.style.gap = "10px";
+            div.innerHTML = `<input type="text" class="size" placeholder="মাপ (যেমন 4/5)"> <input type="number" class="qty" placeholder="পিস">`;
+            document.getElementById('itemContainer').appendChild(div);
+        }
+
+        function addLocalReview() {
+            const name = document.getElementById('revName').value;
+            const text = document.getElementById('revText').value;
+            const photo = document.getElementById('revPhoto').files[0];
+            if(!name || !text) return alert("দয়া করে নাম ও মন্তব্য লিখুন।");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'review-item';
+                div.innerHTML = `<strong>${name}</strong> ⭐⭐⭐⭐⭐<p>${text}</p><img src="${e.target.result}" class="review-img">`;
+                document.getElementById('reviewList').prepend(div);
+                document.getElementById('revForm').style.display = 'none';
+            };
+            if(photo) reader.readAsDataURL(photo); else reader.onload({target: {result: ''}});
+        }
+
+        function sendToWhatsApp() {
+            let name = document.getElementById('custName').value;
+            let addr = document.getElementById('custAddress').value;
+            let description = document.getElementById('workDescription').value;
+            let measurements = "";
+
+            if(serviceFormType === 'fab') {
+                document.querySelectorAll('.size').forEach((s, i) => {
+                    let q = document.querySelectorAll('.qty')[i].value;
+                    if(s.value && q) measurements += `- মাপ: ${s.value} | পিস: ${q}\n`;
+                });
+            }
+
+            let msg = `*নতুন বুকিং (SWA)*\n\n🛠 সার্ভিস: ${document.getElementById('selectedServiceName').innerText}`;
+            if(description) msg += `\n📝 বিবরণ: ${description}`;
+            if(measurements) msg += `\n📏 মাপজোক:\n${measurements}`;
+            msg += `\n\n👤 নাম: ${name}\n📍 ঠিকানা: ${addr}`;
+
+            window.open(`https://wa.me/919239413517?text=${encodeURIComponent(msg)}`);
+        }
+    </script>
+</body>
+</html>
